@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vintage Journal & Corkboard Task Organizer</title>
+  <meta name="description" content="A premium skeuomorphic to-do list designed like a physical desk planner and corkboard. Track tasks, checklists, and labels with satisfying physical animations and sounds.">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+</head>
+<body>
+cd path/to/antigravity
+  <!-- Retro Desk Workspace -->
+  <main id="desk">
+    
+    <!-- Desk Top Header (Controls) -->
+    <header id="desk-header">
+      <div class="desk-title-plate">
+        ✒️ CHRONOS PLANNER
+      </div>
+      
+      <!-- Typewriter Search Tape -->
+      <div class="desk-search-container">
+        <input type="text" id="desk-search" placeholder="🔍 Search memos..." aria-label="Search Memos" autocomplete="off">
+      </div>
+      
+      <div class="desk-controls">
+        <!-- View Toggle Switch -->
+        <div class="view-switch-container">
+          <span class="switch-label">JOURNAL</span>
+          <button class="switch-button" id="view-switch-btn" aria-label="Toggle View Mode">
+            <div class="switch-knob"></div>
+          </button>
+          <span class="switch-label">CORKBOARD</span>
+        </div>
+        
+        <!-- Volume Dial & Slider -->
+        <div class="volume-dial-container">
+          <span>🔊</span>
+          <div class="volume-dial" id="volume-dial" title="Mute/Unmute toggle"></div>
+          <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="0.5" style="width: 60px; accent-color: #d4af37;" aria-label="Volume Slider">
+        </div>
+      </div>
+    </header>
+
+    <!-- Vintage Desktop Props (Sitting on the wood desk) -->
+    
+    <!-- Twin-bell Alarm Clock -->
+    <section id="alarm-clock" title="Click to test/stop alarm or enable notifications">
+      <div class="clock-bell-left"></div>
+      <div class="clock-bell-right"></div>
+      <div class="clock-handle"></div>
+      <div class="clock-body">
+        <div class="clock-face">
+          <div class="clock-numbers">
+            <span class="num12">12</span>
+            <span class="num3">3</span>
+            <span class="num6">6</span>
+            <span class="num9">9</span>
+          </div>
+          <div class="clock-hand-hour"></div>
+          <div class="clock-hand-min"></div>
+          <div class="clock-center"></div>
+        </div>
+      </div>
+      <div class="clock-legs">
+        <div class="clock-leg"></div>
+        <div class="clock-leg"></div>
+      </div>
+    </section>
+
+    <!-- Steaming Coffee Cup -->
+    <div id="coffee-cup-container" title="Interactive coffee cup">
+      <div class="saucer">
+        <div class="cup">
+          <div class="coffee"></div>
+          <div class="steam-wrap">
+            <span class="steam"></span>
+            <span class="steam"></span>
+            <span class="steam"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Trash Can (Delete Drop Zone) -->
+    <section class="trash-can-zone" id="trash-can-zone">
+      <div class="trash-can-lid" id="trash-lid"></div>
+      <div class="trash-can-body"></div>
+      <div class="trash-can-label">TRASH</div>
+    </section>
+
+    <!-- Stitched Leather Pad (Where Binder/Corkboard sits) -->
+    <div id="leather-pad">
+      
+      <!-- Floating Memo Notepad (Click to Write Task) -->
+      <button class="floating-memo" id="floating-memo" aria-label="Create New Memo">
+        <span class="floating-memo-title">New Memo</span>
+        <span class="floating-memo-icon">✍️</span>
+      </button>
+
+      <!-- VIEW A: Leather Binder Journal -->
+      <section class="panel active" id="journal-panel">
+        <div id="binder-container">
+          <div class="binder">
+            <div class="binder-spine-rings">
+              <div class="binder-ring"></div>
+              <div class="binder-ring"></div>
+              <div class="binder-ring"></div>
+              <div class="binder-ring"></div>
+              <div class="binder-ring"></div>
+            </div>
+
+            <!-- Left Page: Filters, Labels & Stats -->
+            <div class="notebook-page left-page ruled">
+              <div class="paperclip"></div>
+              <h1 class="notebook-header">📂 Categories</h1>
+              
+              <ul class="index-card-list" id="left-page-filters">
+                <!-- Dynamic Filters inserted by App -->
+              </ul>
+              
+              <!-- Decorative Coffee Stain -->
+              <div class="coffee-stain"></div>
+            </div>
+
+            <!-- Right Page: Task List & Details -->
+            <div class="notebook-page right-page ruled">
+              <h2 class="notebook-header">📝 Task Log</h2>
+              
+              <div id="right-page-content" class="page-flip-wrap">
+                <!-- Dynamic Task List inserted by App -->
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW B: Corkboard Pinned Notes -->
+      <section class="panel" id="corkboard-panel">
+        <div id="corkboard-container">
+          <!-- Dynamic Sticky Notes inserted by App -->
+        </div>
+      </section>
+      
+    </div>
+  </main>
+
+  <!-- Create/Edit Modal (Notepad Memo) -->
+  <div class="modal-overlay" id="task-modal">
+    <div class="notepad-dialog">
+      <h2 class="notepad-title" id="modal-title">✍️ Write Memo</h2>
+      <form id="task-form">
+        <div class="form-group">
+          <label class="form-label" for="task-title">Subject</label>
+          <input type="text" class="form-input" id="task-title" required placeholder="Water office plants..." autocomplete="off">
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label" for="task-desc">Details</label>
+          <textarea class="form-textarea" id="task-desc" placeholder="Ferns like misting daily, succulents once a week."></textarea>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="task-due-date">Due Time</label>
+            <input type="datetime-local" class="form-input" id="task-due-date">
+          </div>
+          
+          <div class="form-group">
+            <label class="form-label" for="task-priority">Priority</label>
+            <select class="form-select" id="task-priority">
+              <option value="High">🔴 Must (High)</option>
+              <option value="Medium" selected>🟡 Should (Medium)</option>
+              <option value="Low">🟢 Could (Low)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="task-reminder-lead">Reminder Time</label>
+          <select class="form-select" id="task-reminder-lead">
+            <option value="0" selected>⏰ At time of event</option>
+            <option value="10">⏰ 10 minutes before</option>
+            <option value="60">⏰ 1 hour before</option>
+            <option value="1440">⏰ 1 day before</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Labels</label>
+          <div class="label-selector-chips" id="label-selector-chips">
+            <!-- Chips rendered dynamically -->
+          </div>
+          <div style="display: flex; margin-top: 8px; gap: 5px;">
+            <input type="text" id="new-label-input" class="form-input" style="font-size: 1.1rem; padding: 4px;" placeholder="Add custom tag...">
+            <button type="button" id="add-new-label-btn" class="btn btn-primary" style="padding: 4px 12px; font-size: 0.8rem;">Add</button>
+          </div>
+        </div>
+
+        <div class="btn-group">
+          <button type="button" class="btn btn-secondary" id="cancel-task-btn">Cancel</button>
+          <button type="submit" class="btn btn-primary">Pin Memo</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Alarm / Snooze Modal (Ringing Alert) -->
+  <div class="modal-overlay" id="alarm-modal">
+    <div class="alarm-popup">
+      <div class="alarm-popup-bell-icon">🔔</div>
+      <h2 class="alarm-popup-title">ALARM RINGING</h2>
+      <p class="alarm-popup-task" id="alarm-task-title">Task Subject</p>
+      
+      <div class="stamp-button-group">
+        <button class="stamp-btn" id="alarm-done-btn" style="border-color:#386641; color:#386641; background:#e8f5e9;">Completed</button>
+        <button class="stamp-btn" id="alarm-snooze-10m">Snooze 1h</button>
+        <button class="stamp-btn" id="alarm-snooze-1h">Tomorrow</button>
+        <button class="stamp-btn" id="alarm-snooze-1d">Next Week</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Real-time Desk Toast Center -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Core Scripts -->
+  <script type="module" src="app.js"></script>
+</body>
+</html>
