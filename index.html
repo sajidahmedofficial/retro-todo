@@ -5,18 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Vintage Journal & Corkboard Task Organizer</title>
   <meta name="description" content="A premium skeuomorphic to-do list designed like a physical desk planner and corkboard. Track tasks, checklists, and labels with satisfying physical animations and sounds.">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=4">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
 <body>
-cd path/to/antigravity
   <!-- Retro Desk Workspace -->
   <main id="desk">
     
     <!-- Desk Top Header (Controls) -->
     <header id="desk-header">
       <div class="desk-title-plate">
-        ✒️ CHRONOS PLANNER
+        ✒️ TASK DIARY
       </div>
       
       <!-- Typewriter Search Tape -->
@@ -83,6 +82,23 @@ cd path/to/antigravity
       </div>
     </div>
 
+    <!-- Retro Intercom (AI Assistant) -->
+    <section id="retro-intercom" title="Click to chat with AI Planner Assistant">
+      <div class="intercom-grille">
+        <div class="grille-slot"></div>
+        <div class="grille-slot"></div>
+        <div class="grille-slot"></div>
+        <div class="grille-slot"></div>
+        <div class="grille-slot"></div>
+      </div>
+      <div class="intercom-dial"></div>
+      <div class="intercom-led-container">
+        <span class="intercom-led" id="intercom-led"></span>
+        <span class="intercom-led-label">AI SYNC</span>
+      </div>
+      <div class="intercom-brand">PLANNER AI</div>
+    </section>
+
     <!-- Trash Can (Delete Drop Zone) -->
     <section class="trash-can-zone" id="trash-can-zone">
       <div class="trash-can-lid" id="trash-lid"></div>
@@ -92,10 +108,15 @@ cd path/to/antigravity
 
     <!-- Stitched Leather Pad (Where Binder/Corkboard sits) -->
     <div id="leather-pad">
+      <!-- Gold Foil Corner Plate Accents -->
+      <div class="leather-corner-tl"></div>
+      <div class="leather-corner-tr"></div>
+      <div class="leather-corner-bl"></div>
+      <div class="leather-corner-br"></div>
       
       <!-- Floating Memo Notepad (Click to Write Task) -->
-      <button class="floating-memo" id="floating-memo" aria-label="Create New Memo">
-        <span class="floating-memo-title">New Memo</span>
+      <button class="floating-memo" id="floating-memo" aria-label="Create Task">
+        <span class="floating-memo-title">Create Task</span>
         <span class="floating-memo-icon">✍️</span>
       </button>
 
@@ -150,7 +171,7 @@ cd path/to/antigravity
   <!-- Create/Edit Modal (Notepad Memo) -->
   <div class="modal-overlay" id="task-modal">
     <div class="notepad-dialog">
-      <h2 class="notepad-title" id="modal-title">✍️ Write Memo</h2>
+      <h2 class="notepad-title" id="modal-title">✍️ Create Task</h2>
       <form id="task-form">
         <div class="form-group">
           <label class="form-label" for="task-title">Subject</label>
@@ -171,9 +192,9 @@ cd path/to/antigravity
           <div class="form-group">
             <label class="form-label" for="task-priority">Priority</label>
             <select class="form-select" id="task-priority">
-              <option value="High">🔴 Must (High)</option>
-              <option value="Medium" selected>🟡 Should (Medium)</option>
-              <option value="Low">🟢 Could (Low)</option>
+              <option value="High">🔴 Must</option>
+              <option value="Medium" selected>🟡 Should</option>
+              <option value="Low">🟢 Could</option>
             </select>
           </div>
         </div>
@@ -201,7 +222,7 @@ cd path/to/antigravity
 
         <div class="btn-group">
           <button type="button" class="btn btn-secondary" id="cancel-task-btn">Cancel</button>
-          <button type="submit" class="btn btn-primary">Pin Memo</button>
+          <button type="submit" class="btn btn-primary">Create Task</button>
         </div>
       </form>
     </div>
@@ -223,13 +244,52 @@ cd path/to/antigravity
     </div>
   </div>
 
+  <!-- Vintage Typewriter Chat Drawer -->
+  <div id="typewriter-chat-drawer" class="typewriter-chat-drawer">
+    <!-- Metal Typewriter Platen Roller bar at the top -->
+    <div class="typewriter-roller">
+      <div class="roller-knob knob-left"></div>
+      <div class="roller-cylinder"></div>
+      <div class="roller-knob knob-right"></div>
+      <button class="typewriter-close-btn" id="chat-close-btn" aria-label="Close Chat">×</button>
+    </div>
+    
+    <!-- Yellowed Typewriter Paper Sheet -->
+    <div class="typewriter-paper">
+      <div class="paper-header">
+        <div class="paper-title">📠 CHAT RECORD</div>
+        <div class="paper-status">
+          <span class="status-dot offline" id="server-status-dot"></span>
+          <span class="status-text" id="server-status-text">OFFLINE (Run python server.py)</span>
+        </div>
+      </div>
+      
+      <!-- Messages scrollable area -->
+      <div class="paper-scroll-area" id="chat-scroll-area">
+        <div class="chat-log" id="chat-log">
+          <!-- Initial welcome typed message -->
+          <div class="chat-bubble system-message">
+            <span class="msg-sender">SYSTEM:</span> Welcome to Planner AI. Ensure 'server.py' is running locally, then click the intercom speaker to chat.
+          </div>
+        </div>
+        <div class="chat-typing-status" id="chat-typing-status" style="display: none;">
+          <span class="msg-sender">AI:</span> *keys typing* <span class="typing-cursor">_</span>
+        </div>
+      </div>
+      
+      <!-- Input line styled like a typewriter line -->
+      <div class="paper-input-line">
+        <span class="input-prompt">&gt;</span>
+        <input type="text" id="chat-input" placeholder="Type memo command here (e.g., 'Add a task to water window plants tomorrow')..." autocomplete="off" aria-label="Typewriter Input">
+        <button id="chat-send-btn" class="typewriter-key-btn">TYPE</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Real-time Desk Toast Center -->
   <div id="toast-container" class="toast-container"></div>
 
   <!-- Core Scripts -->
   <script type="module" src="app.js"></script>
-  <!-- Feature branch update for pull request -->
-</body>
-</html>
 </body>
 </html>

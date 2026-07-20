@@ -51,6 +51,23 @@ const toastContainer = document.getElementById('toast-container');
 // Temp form states
 let selectedFormLabels = [];
 
+// Typewriter Chat elements
+const retroIntercom = document.getElementById('retro-intercom');
+const intercomLed = document.getElementById('intercom-led');
+const chatDrawer = document.getElementById('typewriter-chat-drawer');
+const chatCloseBtn = document.getElementById('chat-close-btn');
+const chatLog = document.getElementById('chat-log');
+const chatInput = document.getElementById('chat-input');
+const chatSendBtn = document.getElementById('chat-send-btn');
+const chatScrollArea = document.getElementById('chat-scroll-area');
+const chatTypingStatus = document.getElementById('chat-typing-status');
+const serverStatusDot = document.getElementById('server-status-dot');
+const serverStatusText = document.getElementById('server-status-text');
+
+let chatHistory = [];
+let isChatThinking = false;
+let isCheckingServerStatus = false;
+
 // Initialize Application
 document.addEventListener('DOMContentLoaded', () => {
   // First user interaction setup for audio context
@@ -246,6 +263,42 @@ function initUI() {
   trashCanZone.addEventListener('click', () => {
     showToast("Drag task notes here to crumble them!");
   });
+
+  // Connect Retro Intercom & Typewriter Chat behavior
+  if (retroIntercom) {
+    retroIntercom.addEventListener('click', () => {
+      chatDrawer.classList.toggle('active');
+      if (chatDrawer.classList.contains('active')) {
+        chatInput.focus();
+        Audio.playPageFlip();
+      } else {
+        Audio.playPageFlip();
+      }
+    });
+  }
+
+  if (chatCloseBtn) {
+    chatCloseBtn.addEventListener('click', () => {
+      chatDrawer.classList.remove('active');
+      Audio.playPageFlip();
+    });
+  }
+
+  if (chatSendBtn && chatInput) {
+    chatSendBtn.addEventListener('click', () => {
+      sendChatMessage();
+    });
+
+    chatInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        sendChatMessage();
+      }
+    });
+  }
+
+  // Start periodic status check for the server
+  checkServerStatus();
+  setInterval(checkServerStatus, 5000);
 }
 
 function updateVolumeDial(vol, isMuted) {
@@ -888,4 +941,197 @@ function formatDueDateShort(dateTimeStr) {
   } catch (e) {
     return dateTimeStr;
   }
+}
+
+// ---------------------------------------------------------
+// VINTAGE TELE-PLANNER CHAT BACKEND INTEGRATION
+// ---------------------------------------------------------
+async function checkServerStatus() {
+  if (isCheckingServerStatus) return;
+  isCheckingServerStatus = true;
+  try {
+    const res = await fetch('http://localhost:5000/api/status');
+    const data = await res.json();
+    if (data.status === 'online') {
+      intercomLed.className = 'intercom-led online';
+      serverStatusDot.className = 'status-dot online';
+      serverStatusText.textContent = `ONLINE (Gemini AI Active)`;
+    } else {
+      setServerOffline();
+    }
+  } catch (err) {
+    setServerOffline();
+  } finally {
+    isCheckingServerStatus = false;
+  }
+}
+
+function setServerOffline() {
+  if (intercomLed) intercomLed.className = 'intercom-led';
+  if (serverStatusDot) serverStatusDot.className = 'status-dot';
+  if (serverStatusText) serverStatusText.textContent = 'OFFLINE (Run python server.py)';
+}
+
+async function sendChatMessage() {
+  const text = chatInput.value.trim();
+  if (!text || isChatThinking) return;
+
+  chatInput.value = '';
+  isChatThinking = true;
+
+  // Add user bubble
+  appendUserMessage(text);
+  
+  // Set intercom indicators to thinking
+  if (intercomLed) intercomLed.className = 'intercom-led thinking';
+  if (serverStatusDot) serverStatusDot.className = 'status-dot thinking';
+  if (chatTypingStatus) chatTypingStatus.style.display = 'block';
+  chatScrollArea.scrollTop = chatScrollArea.scrollHeight;
+
+  // Play pencil sound
+  Audio.playScribble();
+
+  // Save turn to history
+  chatHistory.push({ role: 'user', parts: [{ text: text }] });
+  if (chatHistory.length > 20) {
+    chatHistory.shift();
+  }
+
+  try {
+    const res = await fetch('http://localhost:5000/api/chat', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        message: text,
+        tasks: State.getTasks(),
+        history: chatHistory
+      })
+    });
+
+    if (!res.ok) {
+      // Remove last user message from history if failed
+      chatHistory.pop();
+      throw new Error(`Server returned HTTP ${res.status}`);
+    }
+
+    const data = await res.json();
+
+    // Process actions
+    if (data.actions && data.actions.length > 0) {
+      processAIActions(data.actions);
+    }
+
+    // Hide indicator
+    if (chatTypingStatus) chatTypingStatus.style.display = 'none';
+
+    // Type the response
+    await appendAiMessageAndType(data.response);
+
+    // Save AI response to history
+    chatHistory.push({ role: 'model', parts: [{ text: data.response }] });
+    if (chatHistory.length > 20) {
+      chatHistory.shift();
+    }
+
+  } catch (err) {
+    console.error("AI Error:", err);
+    if (chatTypingStatus) chatTypingStatus.style.display = 'none';
+    showToast("AI Telegram connection failed");
+    
+    // Type system error message
+    const bubble = document.createElement('div');
+    bubble.className = 'chat-bubble system-message';
+    bubble.innerHTML = `<span class="msg-sender">SYSTEM:</span> Error communicating with AI server. Make sure 'server.py' is running and active.`;
+    chatLog.appendChild(bubble);
+    chatScrollArea.scrollTop = chatScrollArea.scrollHeight;
+    Audio.playTypewriterBell();
+  } finally {
+    isChatThinking = false;
+    checkServerStatus(); // restore LED status
+  }
+}
+
+function appendUserMessage(text) {
+  const bubble = document.createElement('div');
+  bubble.className = 'chat-bubble user-message';
+  
+  const senderSpan = document.createElement('span');
+  senderSpan.className = 'msg-sender';
+  senderSpan.textContent = 'USER: ';
+  bubble.appendChild(senderSpan);
+  
+  const textNode = document.createTextNode(text);
+  bubble.appendChild(textNode);
+  
+  chatLog.appendChild(bubble);
+  chatScrollArea.scrollTop = chatScrollArea.scrollHeight;
+}
+
+function processAIActions(actions) {
+  let modified = false;
+  actions.forEach(action => {
+    if (action.type === 'ADD_TASK') {
+      State.addTask(action.data);
+      modified = true;
+    } else if (action.type === 'UPDATE_TASK') {
+      State.updateTask(action.data.id, action.data);
+      modified = true;
+    } else if (action.type === 'DELETE_TASK') {
+      State.deleteTask(action.data.id);
+      modified = true;
+    }
+  });
+
+  if (modified) {
+    showToast("Planner updated by AI Assistant");
+    renderApp();
+    Audio.playStamp();
+  }
+}
+
+function appendAiMessageAndType(text) {
+  return new Promise((resolve) => {
+    const bubble = document.createElement('div');
+    bubble.className = 'chat-bubble ai-message';
+    
+    const senderSpan = document.createElement('span');
+    senderSpan.className = 'msg-sender';
+    senderSpan.textContent = 'AI: ';
+    bubble.appendChild(senderSpan);
+    
+    const textNode = document.createTextNode('');
+    bubble.appendChild(textNode);
+    chatLog.appendChild(bubble);
+    
+    let index = 0;
+    
+    // Play initial bell
+    Audio.playTypewriterBell();
+    
+    function typeChar() {
+      if (index < text.length) {
+        const char = text[index];
+        textNode.appendData(char);
+        index++;
+        
+        if (char !== ' ' && char !== '\n') {
+          Audio.playTypewriterKey();
+        } else if (char === '\n') {
+          Audio.playTypewriterBell();
+        }
+        
+        chatScrollArea.scrollTop = chatScrollArea.scrollHeight;
+        
+        const delay = char === ',' || char === '.' || char === '?' || char === '!' ? 180 : 20 + Math.random() * 15;
+        setTimeout(typeChar, delay);
+      } else {
+        Audio.playTypewriterBell();
+        resolve();
+      }
+    }
+    
+    typeChar();
+  });
 }

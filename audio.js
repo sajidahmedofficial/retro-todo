@@ -314,3 +314,85 @@ export function stopAlarm() {
     alarmInterval = null;
   }
 }
+
+// 7. Typewriter Key click (Satisfying mechanical strike)
+export function playTypewriterKey() {
+  const dest = createSoundChain();
+  if (!dest) return;
+
+  const now = audioCtx.currentTime;
+  
+  // Randomize key click slightly to make typing feel organic
+  const pitchOffset = Math.random() * 40 - 20; 
+  const duration = 0.03 + Math.random() * 0.02;
+
+  // PART A: Key contact metal strike (highpass noise)
+  const noiseSource = audioCtx.createBufferSource();
+  noiseSource.buffer = noiseBuffer;
+
+  const noiseFilter = audioCtx.createBiquadFilter();
+  noiseFilter.type = 'highpass';
+  noiseFilter.frequency.setValueAtTime(3000 + pitchOffset * 10, now);
+
+  const noiseGain = audioCtx.createGain();
+  noiseGain.gain.setValueAtTime(0.001, now);
+  noiseGain.gain.linearRampToValueAtTime(0.08, now + 0.002);
+  noiseGain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+  noiseSource.connect(noiseFilter);
+  noiseFilter.connect(noiseGain);
+  noiseGain.connect(dest);
+
+  noiseSource.start(now);
+  noiseSource.stop(now + duration);
+
+  // PART B: Mechanical wooden/metal typewriter body thud (Triangle pitch sweep)
+  const thudOsc = audioCtx.createOscillator();
+  thudOsc.type = 'triangle';
+  thudOsc.frequency.setValueAtTime(180 + pitchOffset, now);
+  thudOsc.frequency.exponentialRampToValueAtTime(80, now + 0.04);
+
+  const thudGain = audioCtx.createGain();
+  thudGain.gain.setValueAtTime(0.12, now);
+  thudGain.gain.exponentialRampToValueAtTime(0.001, now + 0.045);
+
+  thudOsc.connect(thudGain);
+  thudGain.connect(dest);
+
+  thudOsc.start(now);
+  thudOsc.stop(now + 0.045);
+}
+
+// 8. Typewriter Carriage Return Bell (Satisfying high-pitched chime)
+export function playTypewriterBell() {
+  const dest = createSoundChain();
+  if (!dest) return;
+
+  const now = audioCtx.currentTime;
+  const chimeDuration = 0.5;
+
+  const osc1 = audioCtx.createOscillator();
+  const osc2 = audioCtx.createOscillator();
+
+  osc1.type = 'sine';
+  osc1.frequency.setValueAtTime(1568, now); // G6 note
+  
+  osc2.type = 'sine';
+  osc2.frequency.setValueAtTime(2352, now); // high overtone
+
+  const chimeGain = audioCtx.createGain();
+  chimeGain.gain.setValueAtTime(0.001, now);
+  chimeGain.gain.linearRampToValueAtTime(0.12, now + 0.015);
+  chimeGain.gain.exponentialRampToValueAtTime(0.001, now + chimeDuration);
+
+  osc1.connect(chimeGain);
+  osc2.connect(chimeGain);
+  chimeGain.connect(dest);
+
+  osc1.start(now);
+  osc2.start(now);
+
+  osc1.stop(now + chimeDuration);
+  osc2.stop(now + chimeDuration);
+}
+

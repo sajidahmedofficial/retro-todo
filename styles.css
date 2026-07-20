@@ -27,13 +27,14 @@
 
 body {
   font-family: var(--font-ui);
-  background-color: var(--wood-dark);
-  /* Wood plank texture using gradients */
+  background-color: #2b1810;
+  /* Polished premium wood texture overlay and desk lamp glow */
   background-image: 
-    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-    linear-gradient(rgba(0, 0, 0, 0.3) 1px, transparent 1px),
-    linear-gradient(to right, rgba(0,0,0,0.2) 0%, rgba(255,255,255,0.03) 50%, rgba(0,0,0,0.2) 100%);
-  background-size: 120px 100%, 100% 6px, 100% 100%;
+    radial-gradient(circle at 10% 10%, rgba(255, 240, 200, 0.08) 0%, transparent 65%),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.01) 1px, transparent 1px),
+    linear-gradient(rgba(0, 0, 0, 0.35) 1px, transparent 1px),
+    linear-gradient(to right, rgba(0,0,0,0.25) 0%, rgba(255,255,255,0.03) 50%, rgba(0,0,0,0.25) 100%);
+  background-size: 100% 100%, 120px 100%, 100% 6px, 100% 100%;
   color: #333;
   min-height: 100vh;
   overflow-x: hidden;
@@ -65,14 +66,16 @@ body {
 /* Stitched Leather Pad Container */
 #leather-pad {
   flex: 1;
-  background-color: var(--leather-base);
-  background-image: radial-gradient(rgba(0, 0, 0, 0.25) 15%, transparent 20%);
-  background-size: 4px 4px;
+  background-color: #3d2112;
+  background-image: 
+    radial-gradient(rgba(0, 0, 0, 0.35) 15%, transparent 20%),
+    radial-gradient(rgba(255, 255, 255, 0.02) 15%, transparent 20%);
+  background-size: 5px 5px, 6px 6px;
   border-radius: 12px;
-  border: 2px dashed rgba(255, 210, 150, 0.25);
+  border: 2px dashed rgba(212, 175, 55, 0.35); /* Gold dashed border stitch */
   box-shadow: 
-    inset 0 0 40px rgba(0,0,0,0.9),
-    0 4px 15px rgba(0,0,0,0.6);
+    inset 0 0 50px rgba(0,0,0,0.95),
+    0 8px 30px rgba(0,0,0,0.7);
   padding: 30px;
   position: relative;
   display: flex;
@@ -81,6 +84,22 @@ body {
   align-items: center;
   min-height: 680px;
 }
+
+/* Gold corners for leather desk pad */
+.leather-corner-tl, .leather-corner-tr, .leather-corner-bl, .leather-corner-br {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  border: 3px double #d4af37;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.85;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.5));
+}
+.leather-corner-tl { top: 12px; left: 12px; border-right: none; border-bottom: none; border-top-left-radius: 8px; }
+.leather-corner-tr { top: 12px; right: 12px; border-left: none; border-bottom: none; border-top-right-radius: 8px; }
+.leather-corner-bl { bottom: 12px; left: 12px; border-right: none; border-top: none; border-bottom-left-radius: 8px; }
+.leather-corner-br { bottom: 12px; right: 12px; border-left: none; border-top: none; border-bottom-right-radius: 8px; }
 
 /* Top Desk Accessories Panel */
 #desk-header {
@@ -93,21 +112,41 @@ body {
 }
 
 .desk-title-plate {
-  background: linear-gradient(135deg, #d4af37, #aa7c11);
+  background: linear-gradient(135deg, #fbe8a6 0%, #d4af37 40%, #aa7c11 75%, #6d4e05 100%);
   border: 2px solid #553c07;
   border-radius: 4px;
-  padding: 6px 20px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.4), inset 0 1px 1px rgba(255,255,255,0.4);
+  padding: 6px 24px;
+  box-shadow: 
+    0 6px 12px rgba(0,0,0,0.5), 
+    inset 0 1px 2px rgba(255,255,255,0.6),
+    0 0 0 1px rgba(212,175,55,0.4);
   font-family: var(--font-type);
-  color: #1a1002;
+  color: #261601;
   font-weight: bold;
-  text-shadow: 0 1px 0 rgba(255,255,255,0.3);
-  letter-spacing: 2px;
+  text-shadow: 0 1px 1px rgba(255,255,255,0.4);
+  letter-spacing: 3px;
   font-size: 1.1rem;
   display: flex;
   gap: 10px;
   align-items: center;
+  position: relative;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
+
+.desk-title-plate::before, .desk-title-plate::after {
+  /* Rivets on brass plate */
+  content: '';
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  background: radial-gradient(circle at 30% 30%, #fff, #555);
+  border-radius: 50%;
+  top: calc(50% - 2.5px);
+  box-shadow: 0 1px 1px rgba(0,0,0,0.4);
+}
+.desk-title-plate::before { left: 8px; }
+.desk-title-plate::after { right: 8px; }
 
 .desk-search-container {
   flex: 1;
@@ -143,6 +182,7 @@ body {
   display: flex;
   align-items: center;
   gap: 20px;
+  flex-shrink: 0;
 }
 
 /* Vintage Slide Switch for View Toggle */
@@ -214,11 +254,13 @@ body {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: radial-gradient(circle, #555 20%, #222 80%);
-  border: 3px solid #666;
+  background: radial-gradient(circle, #f3d060 20%, #a27a18 70%, #5a3e09 100%);
+  border: 3px solid #3d2a06;
   position: relative;
   cursor: pointer;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,255,255,0.2);
+  box-shadow: 
+    0 5px 8px rgba(0,0,0,0.5), 
+    inset 0 1px 2px rgba(255,255,255,0.5);
   transition: transform 0.1s;
 }
 
@@ -227,10 +269,10 @@ body {
   position: absolute;
   width: 3px;
   height: 10px;
-  background: #fff;
+  background: #c62828; /* Classic red dot indicator */
   left: calc(50% - 1.5px);
-  top: 2px;
-  border-radius: 1px;
+  top: 3px;
+  border-radius: 1.5px;
 }
 
 /* Interactive Desk Coffee Cup */
@@ -258,8 +300,10 @@ body {
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  background: radial-gradient(circle, #fff 50%, #e0e0e0 90%);
-  box-shadow: inset 0 0 15px rgba(0,0,0,0.2), 0 4px 8px rgba(0,0,0,0.3);
+  background: radial-gradient(circle, #fff 50%, #e8e8e8 85%, #d4af37 95%, #aa7c11 100%);
+  box-shadow: 
+    inset 0 0 15px rgba(0,0,0,0.15), 
+    0 6px 12px rgba(0,0,0,0.35);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -321,7 +365,7 @@ body {
 /* Vintage Alarm Clock */
 #alarm-clock {
   position: absolute;
-  top: 30px;
+  top: 110px;
   left: 30px;
   width: 100px;
   height: 120px;
@@ -332,8 +376,8 @@ body {
 .clock-bell-left, .clock-bell-right {
   width: 36px;
   height: 18px;
-  background: linear-gradient(135deg, #d32f2f, #b71c1c);
-  border: 2px solid #333;
+  background: linear-gradient(135deg, #f3d060, #a27a18, #7a5807);
+  border: 2px solid #4a3810;
   border-bottom: none;
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
@@ -347,7 +391,7 @@ body {
 .clock-handle {
   width: 30px;
   height: 12px;
-  border: 3px solid #555;
+  border: 3px solid #aa8018;
   border-bottom: none;
   border-radius: 6px 6px 0 0;
   position: absolute;
@@ -359,12 +403,12 @@ body {
   width: 90px;
   height: 90px;
   border-radius: 50%;
-  background: radial-gradient(circle, #e53935, #c62828);
-  border: 4px solid #1a0f0a;
+  background: radial-gradient(circle, #f9e394 0%, #d4af37 60%, #8a640f 100%);
+  border: 4px solid #4a3608;
   position: absolute;
   top: 10px;
   left: 5px;
-  box-shadow: 0 8px 16px rgba(0,0,0,0.5), inset 0 2px 4px rgba(255,255,255,0.4);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.6), inset 0 2px 5px rgba(255,255,255,0.6);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -382,7 +426,7 @@ body {
 
 .clock-hand-hour, .clock-hand-min {
   position: absolute;
-  background: #111;
+  background: #1c3d75;
   border-radius: 2px;
   bottom: 50%;
   left: calc(50% - 1.5px);
@@ -394,7 +438,7 @@ body {
 .clock-center {
   width: 6px;
   height: 6px;
-  background: #e53935;
+  background: #aa7c11;
   border-radius: 50%;
   position: absolute;
   top: calc(50% - 3px);
@@ -457,7 +501,7 @@ body {
    ========================================================================== */
 #binder-container {
   width: 100%;
-  max-width: 960px;
+  max-width: 1100px;
   display: flex;
   justify-content: center;
   position: relative;
@@ -465,7 +509,7 @@ body {
 
 .binder {
   width: 100%;
-  height: 600px;
+  height: 650px;
   background: linear-gradient(to right, #613824 0%, #442211 48%, #201007 50%, #442211 52%, #613824 100%);
   border-radius: 12px;
   box-shadow: 
@@ -496,14 +540,15 @@ body {
   width: 48px;
   height: 16px;
   background: linear-gradient(to bottom, 
-    #aaa 0%, 
-    #fff 25%, 
-    #ccc 45%, 
-    #888 65%, 
-    #555 100%);
-  border: 1px solid rgba(0,0,0,0.4);
+    #444 0%, 
+    #bbb 15%, 
+    #fff 30%, 
+    #ddd 45%, 
+    #999 70%, 
+    #222 100%);
+  border: 1px solid rgba(0,0,0,0.5);
   border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.4);
+  filter: drop-shadow(4px 4px 4px rgba(0,0,0,0.45));
 }
 
 /* Notebook Page base */
@@ -667,7 +712,7 @@ body {
 
 /* Journal Task List Container */
 .task-list-scroller {
-  height: 480px;
+  height: 530px;
   overflow-y: auto;
   padding-right: 5px;
 }
@@ -904,19 +949,27 @@ body {
   min-height: 180px;
   padding: 25px 15px 15px 15px;
   position: relative;
+  /* Premium paper grain reflection overlay */
+  background-image: 
+    linear-gradient(135deg, rgba(255,255,255,0.4) 0%, transparent 100%),
+    linear-gradient(to right, rgba(0,0,0,0.01) 1px, transparent 1px);
+  background-size: 100% 100%, 8px 100%;
   box-shadow: 
-    0 6px 12px var(--cork-shadow), 
+    0 8px 16px var(--cork-shadow), 
     0 2px 4px rgba(0,0,0,0.15);
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.25s;
   cursor: grab;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  border-radius: 2px;
 }
 
 .sticky-note:hover {
-  transform: scale(1.03) rotate(0deg) !important;
-  box-shadow: 0 12px 20px rgba(40, 24, 12, 0.4);
+  transform: scale(1.06) translateY(-6px) rotate(1deg) !important;
+  box-shadow: 
+    0 18px 28px rgba(40, 24, 12, 0.38),
+    0 5px 8px rgba(0,0,0,0.12);
   z-index: 10;
 }
 
@@ -1018,14 +1071,35 @@ body {
 /* Interactive notepad dialog */
 .notepad-dialog {
   width: 100%;
-  max-width: 460px;
-  background-color: #fffae5;
-  box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+  max-width: 480px;
+  background-color: #fff9d7;
+  /* Ruled lines on notepad */
+  background-image: 
+    linear-gradient(rgba(180, 200, 240, 0.3) 1px, transparent 1px);
+  background-size: 100% 28px;
+  background-position: 0 10px;
+  border-left: 2px solid rgba(239, 110, 110, 0.3); /* vertical red margin */
   border-radius: 4px;
   position: relative;
-  padding: 30px;
-  border-top: 15px solid #ebda86;
+  padding: 30px 30px 25px 45px;
+  box-shadow: 
+    0 25px 50px rgba(0,0,0,0.65),
+    0 2px 4px rgba(0,0,0,0.2);
   animation: modalEnter 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* legal pad head binding block */
+.notepad-dialog::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 18px;
+  background: linear-gradient(to bottom, #724b22, #472d11);
+  border-radius: 4px 4px 0 0;
+  box-shadow: 
+    inset 0 1px 0 rgba(255,255,255,0.25),
+    0 2px 4px rgba(0,0,0,0.4);
+  z-index: 5;
 }
 
 @keyframes modalEnter {
@@ -1035,11 +1109,12 @@ body {
 
 .notepad-title {
   font-family: var(--font-hand);
-  font-size: 2.1rem;
+  font-size: 2.3rem;
   color: #4a3e10;
-  border-bottom: 2px dashed rgba(74, 62, 16, 0.2);
-  margin-bottom: 20px;
+  border-bottom: 2px dashed rgba(74, 62, 16, 0.15);
+  margin-bottom: 25px;
   padding-bottom: 5px;
+  margin-top: 5px;
 }
 
 .form-group {
@@ -1058,31 +1133,43 @@ body {
 
 .form-input, .form-textarea, .form-select {
   width: 100%;
-  padding: 10px;
-  border: 1px dashed #d1c180;
-  background-color: rgba(255, 255, 255, 0.6);
-  border-radius: 4px;
+  padding: 4px 8px;
+  border: none;
+  border-bottom: 2px solid #e1d39b;
+  background-color: transparent;
+  border-radius: 0;
   font-family: var(--font-hand);
-  font-size: 1.35rem;
-  color: #2b2508;
+  font-size: 1.4rem;
+  color: #312a0d;
   outline: none;
-  transition: background-color 0.2s;
+  transition: all 0.2s;
 }
 
 .form-input:focus, .form-textarea:focus, .form-select:focus {
-  background-color: #ffffff;
-  border: 1px solid #aa9c5a;
+  background-color: rgba(255, 255, 255, 0.4);
+  border-bottom: 2px dashed var(--ink-blue);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.03);
 }
 
 .form-textarea {
-  resize: vertical;
+  resize: none;
   min-height: 80px;
+  line-height: 28px; /* aligns text with horizontal ruled lines */
+}
+
+.form-select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%234a3e10'><path d='M1 3h10L6 9z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  padding-right: 24px;
 }
 
 .form-row {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 15px;
 }
 
 /* Preset labels selector chips */
@@ -1112,37 +1199,57 @@ body {
 .btn-group {
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
+  gap: 12px;
   margin-top: 25px;
 }
 
 .btn {
-  padding: 10px 20px;
+  padding: 8px 18px;
   border-radius: 4px;
   font-family: var(--font-ui);
   font-size: 0.9rem;
   font-weight: bold;
   cursor: pointer;
   border: none;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
-  transition: transform 0.1s, box-shadow 0.1s;
+  transition: transform 0.15s, box-shadow 0.15s;
 }
 
 .btn:active {
   transform: translateY(1px);
-  box-shadow: 0 1px 2px rgba(0,0,0,0.15);
 }
 
 .btn-secondary {
-  background-color: #eedcbd;
-  color: #4a3311;
-  border: 1px solid #ccb28d;
+  background: #ecdcb9;
+  border: 1px solid #b8a278;
+  color: #4f3d1b;
+  box-shadow: 
+    0 2px 4px rgba(0,0,0,0.1),
+    inset 0 1px 0 rgba(255,255,255,0.4);
+}
+
+.btn-secondary:hover {
+  background: #f5e9ce;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
 }
 
 .btn-primary {
-  background: linear-gradient(to bottom, #d4af37, #b59223);
-  color: #1a1200;
-  border: 1px solid #8e7116;
+  background: linear-gradient(to bottom, #d4af37, #b28e21);
+  border: 1px solid #7d6012;
+  color: #1a0f02;
+  box-shadow: 
+    0 3px 6px rgba(0,0,0,0.2), 
+    inset 0 1px 1px rgba(255,255,255,0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(to bottom, #e5be49, #c7a12b);
+  transform: translateY(-1px);
+  box-shadow: 
+    0 6px 12px rgba(0,0,0,0.25),
+    inset 0 1px 1px rgba(255,255,255,0.5);
 }
 
 /* ==========================================================================
@@ -1386,3 +1493,428 @@ body {
     align-items: center;
   }
 }
+
+/* ==========================================================================
+   AI RETRO INTERCOM STYLES
+   ========================================================================== */
+#retro-intercom {
+  position: absolute;
+  top: 280px;
+  right: 30px;
+  width: 100px;
+  height: 120px;
+  z-index: 12;
+  cursor: pointer;
+  background: radial-gradient(circle at 50% 30%, #52311c 0%, #301b0f 80%, #170d07 100%);
+  border: 4px solid #1c1009;
+  border-radius: 8px;
+  box-shadow: 
+    0 10px 20px rgba(0,0,0,0.6),
+    inset 0 1px 2px rgba(255,255,255,0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 6px;
+  transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+#retro-intercom:hover {
+  transform: translateY(-4px) scale(1.03) rotate(1deg);
+  box-shadow: 0 14px 28px rgba(0,0,0,0.7);
+}
+
+#retro-intercom:active {
+  transform: translateY(-1px) scale(0.98);
+}
+
+/* Intercom Grille */
+.intercom-grille {
+  width: 80%;
+  height: 48px;
+  background: #150a04;
+  border: 2px solid #28150a;
+  border-radius: 4px;
+  box-shadow: inset 0 3px 5px rgba(0,0,0,0.8);
+  display: flex;
+  justify-content: space-around;
+  padding: 4px 6px;
+  margin-bottom: 8px;
+}
+
+.grille-slot {
+  width: 4px;
+  height: 100%;
+  background: #000;
+  border-radius: 2px;
+  box-shadow: inset 0 0 2px rgba(255,255,255,0.05);
+}
+
+/* Intercom dial knob */
+.intercom-dial {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ecd081 20%, #b88f28 75%, #6a4f10 100%);
+  border: 2px solid #201306;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+  position: relative;
+}
+
+.intercom-dial::after {
+  content: '';
+  position: absolute;
+  width: 2px;
+  height: 6px;
+  background: #222;
+  left: calc(50% - 1px);
+  top: 2px;
+  border-radius: 1px;
+}
+
+/* LED light indicator */
+.intercom-led-container {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 8px;
+}
+
+.intercom-led {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #d62828; /* default offline red */
+  box-shadow: 0 0 2px #000;
+  transition: all 0.3s;
+}
+
+.intercom-led.online {
+  background-color: #06d6a0;
+  box-shadow: 0 0 10px #06d6a0, 0 0 4px #06d6a0;
+}
+
+.intercom-led.thinking {
+  background-color: #ffd166;
+  box-shadow: 0 0 10px #ffd166, 0 0 4px #ffd166;
+  animation: ledPulse 0.5s infinite alternate;
+}
+
+.intercom-led-label {
+  font-family: var(--font-type);
+  font-size: 7px;
+  color: #c6b8a8;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 1px rgba(0,0,0,0.8);
+}
+
+.intercom-brand {
+  font-family: var(--font-type);
+  font-size: 6px;
+  color: #8c7865;
+  margin-top: auto;
+  letter-spacing: 0.5px;
+}
+
+@keyframes ledPulse {
+  from { opacity: 0.5; }
+  to { opacity: 1; }
+}
+
+/* ==========================================================================
+   AI TYPEWRITER CHAT DRAWER
+   ========================================================================== */
+.typewriter-chat-drawer {
+  position: fixed;
+  bottom: -600px; /* Hidden below screen */
+  left: 40px; /* Kept on the left so it doesn't block your tasks */
+  width: 440px;
+  height: 520px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  transition: bottom 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+  box-shadow: 0 -10px 40px rgba(0,0,0,0.8);
+}
+
+.typewriter-chat-drawer.active {
+  bottom: 0;
+}
+
+/* Platen Roller Cylinder at top of typewriter paper */
+.typewriter-roller {
+  height: 36px;
+  background: linear-gradient(to bottom, #444 0%, #222 45%, #111 55%, #333 100%);
+  border-top: 2px solid #555;
+  border-bottom: 2px solid #111;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 15px;
+  border-radius: 6px 6px 0 0;
+}
+
+.roller-cylinder {
+  position: absolute;
+  left: 30px;
+  right: 30px;
+  top: 6px;
+  bottom: 6px;
+  background: #111;
+  border-radius: 3px;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.6);
+}
+
+.roller-knob {
+  width: 24px;
+  height: 24px;
+  background: radial-gradient(circle, #555 30%, #333 70%, #1a1a1a 100%);
+  border: 2px solid #222;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  position: relative;
+  z-index: 2;
+  cursor: pointer;
+}
+
+.roller-knob::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  left: 3px;
+  right: 3px;
+  border-radius: 50%;
+  border: 1px dashed rgba(255,255,255,0.15);
+}
+
+.knob-left { margin-left: -20px; }
+.knob-right { margin-right: -20px; }
+
+.typewriter-close-btn {
+  background: none;
+  border: none;
+  color: #aaa;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 10;
+  line-height: 1;
+  transition: color 0.2s;
+  padding: 2px;
+}
+
+.typewriter-close-btn:hover {
+  color: #ff8b94;
+}
+
+/* The Yellowed Typewriter Paper */
+.typewriter-paper {
+  flex: 1;
+  min-height: 0;
+  background-color: var(--paper-cream);
+  background-image: 
+    linear-gradient(rgba(180, 200, 240, 0.3) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(239, 110, 110, 0.3) 1px, transparent 1px);
+  background-size: 100% 24px, 100% 100%;
+  background-position: 0 0, 45px 0; /* Margin line on left */
+  padding: 20px 25px 15px 65px; /* Leave space for left margin */
+  display: flex;
+  flex-direction: column;
+  border-left: 2px solid rgba(0,0,0,0.15);
+  border-right: 2px solid rgba(0,0,0,0.15);
+  box-shadow: inset 0 10px 20px rgba(0,0,0,0.05);
+  position: relative;
+}
+
+/* Torn paper look at bottom */
+.typewriter-paper::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 0;
+  right: 0;
+  height: 8px;
+  background-image: linear-gradient(-45deg, var(--paper-cream) 4px, transparent 0), linear-gradient(45deg, var(--paper-cream) 4px, transparent 0);
+  background-position: left bottom;
+  background-repeat: repeat-x;
+  background-size: 8px 8px;
+  z-index: 5;
+}
+
+/* Paper header elements */
+.paper-header {
+  border-bottom: 2px double #aaa;
+  padding-bottom: 6px;
+  margin-bottom: 12px;
+  font-family: var(--font-type);
+}
+
+.paper-title {
+  font-size: 0.75rem;
+  font-weight: bold;
+  color: #444;
+  letter-spacing: 0.5px;
+}
+
+.paper-status {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.65rem;
+  color: #777;
+  margin-top: 3px;
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #d62828;
+}
+
+.status-dot.online { background-color: #06d6a0; }
+.status-dot.thinking { background-color: #ffd166; animation: ledPulse 0.5s infinite alternate; }
+
+/* Scrollable messages area */
+.paper-scroll-area {
+  flex: 1 1 0; /* Bulletproof flex constraint */
+  height: 0; /* Force it to not expand past parent */
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain; /* Prevent scrolling the whole website */
+  margin-bottom: 15px;
+  padding-right: 5px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0,0,0,0.15) transparent;
+}
+
+.paper-scroll-area::-webkit-scrollbar {
+  width: 5px;
+}
+
+.paper-scroll-area::-webkit-scrollbar-thumb {
+  background-color: rgba(0,0,0,0.15);
+  border-radius: 3px;
+}
+
+.chat-log {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-family: var(--font-type);
+  font-size: 0.85rem;
+  color: #2b2b2b;
+  line-height: 1.4;
+}
+
+.chat-bubble {
+  word-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+.chat-bubble.user-message {
+  color: var(--ink-blue);
+}
+
+.chat-bubble.ai-message {
+  color: #222;
+}
+
+.chat-bubble.system-message {
+  color: #777;
+  font-style: italic;
+  font-size: 0.8rem;
+  border-left: 2px dashed #ccc;
+  padding-left: 8px;
+}
+
+.msg-sender {
+  font-weight: bold;
+  margin-right: 4px;
+}
+
+.chat-typing-status {
+  font-family: var(--font-type);
+  font-size: 0.85rem;
+  color: #777;
+  font-style: italic;
+}
+
+.typing-cursor {
+  animation: flashCursor 0.4s infinite alternate;
+  font-weight: bold;
+}
+
+@keyframes flashCursor {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Underline inputs typed directly on the paper */
+.paper-input-line {
+  border-top: 1px dashed #bbb;
+  padding-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-type);
+  font-size: 0.9rem;
+}
+
+.input-prompt {
+  color: #444;
+  font-weight: bold;
+}
+
+#chat-input {
+  flex: 1;
+  background: none;
+  border: none;
+  border-bottom: 1px solid #777;
+  font-family: var(--font-type);
+  font-size: 0.85rem;
+  color: var(--ink-blue);
+  outline: none;
+  padding: 3px 0;
+}
+
+#chat-input::placeholder {
+  color: #999;
+  font-style: italic;
+  font-size: 0.8rem;
+}
+
+/* Vintage circular typewriter key */
+.typewriter-key-btn {
+  background: radial-gradient(circle, #444 0%, #222 80%, #111 100%);
+  color: #fff;
+  border: 2px solid #555;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  font-family: var(--font-type);
+  font-size: 0.7rem;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 
+    0 4px 6px rgba(0,0,0,0.5), 
+    inset 0 1px 2px rgba(255,255,255,0.2);
+  transition: all 0.1s;
+  flex-shrink: 0;
+}
+
+.typewriter-key-btn:hover {
+  background: radial-gradient(circle, #555 0%, #2a2a2a 80%, #1c1c1c 100%);
+}
+
+.typewriter-key-btn:active {
+  transform: translateY(2px) scale(0.95);
+  box-shadow: 
+    0 1px 2px rgba(0,0,0,0.5), 
+    inset 0 1px 4px rgba(0,0,0,0.8);
+}
+
