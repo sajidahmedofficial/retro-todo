@@ -946,11 +946,23 @@ function formatDueDateShort(dateTimeStr) {
 // ---------------------------------------------------------
 // VINTAGE TELE-PLANNER CHAT BACKEND INTEGRATION
 // ---------------------------------------------------------
+// Determine backend URL dynamically
+const AI_BACKEND_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  ? 'http://localhost:5000'
+  : null; // No backend available on deployed sites
+
 async function checkServerStatus() {
   if (isCheckingServerStatus) return;
   isCheckingServerStatus = true;
+
+  if (!AI_BACKEND_URL) {
+    setServerOffline('OFFLINE (AI requires local server.py)');
+    isCheckingServerStatus = false;
+    return;
+  }
+
   try {
-    const res = await fetch('http://localhost:5000/api/status');
+    const res = await fetch(`${AI_BACKEND_URL}/api/status`);
     const data = await res.json();
     if (data.status === 'online') {
       intercomLed.className = 'intercom-led online';
@@ -966,10 +978,10 @@ async function checkServerStatus() {
   }
 }
 
-function setServerOffline() {
+function setServerOffline(msg) {
   if (intercomLed) intercomLed.className = 'intercom-led';
   if (serverStatusDot) serverStatusDot.className = 'status-dot';
-  if (serverStatusText) serverStatusText.textContent = 'OFFLINE (Run python server.py)';
+  if (serverStatusText) serverStatusText.textContent = msg || 'OFFLINE (Run python server.py)';
 }
 
 async function sendChatMessage() {
@@ -982,6 +994,18 @@ async function sendChatMessage() {
   // Add user bubble
   appendUserMessage(text);
   
+  // Check if backend is available
+  if (!AI_BACKEND_URL) {
+    isChatThinking = false;
+    const bubble = document.createElement('div');
+    bubble.className = 'chat-bubble system-message';
+    bubble.innerHTML = `<span class="msg-sender">SYSTEM:</span> AI chat requires the Python backend running locally. Run 'python server.py' on your machine, then open http://localhost:3000 to use the AI assistant.`;
+    chatLog.appendChild(bubble);
+    chatScrollArea.scrollTop = chatScrollArea.scrollHeight;
+    Audio.playTypewriterBell();
+    return;
+  }
+
   // Set intercom indicators to thinking
   if (intercomLed) intercomLed.className = 'intercom-led thinking';
   if (serverStatusDot) serverStatusDot.className = 'status-dot thinking';
@@ -998,7 +1022,7 @@ async function sendChatMessage() {
   }
 
   try {
-    const res = await fetch('http://localhost:5000/api/chat', {
+    const res = await fetch(`${AI_BACKEND_URL}/api/chat`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

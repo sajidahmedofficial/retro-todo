@@ -1446,6 +1446,10 @@ body {
 
 /* Responsive Mobile Layout adjustments */
 @media (max-width: 900px) {
+  body {
+    padding: 8px;
+  }
+
   #desk {
     padding: 15px;
     min-height: auto;
@@ -1474,7 +1478,7 @@ body {
   .notebook-page {
     border-radius: 8px !important;
     border: 1px solid rgba(0,0,0,0.1) !important;
-    min-height: 400px;
+    min-height: 300px;
     padding: 20px !important;
   }
   
@@ -1489,8 +1493,207 @@ body {
   
   #desk-header {
     flex-direction: column;
-    gap: 15px;
+    gap: 12px;
     align-items: center;
+  }
+
+  .desk-search-container {
+    max-width: 100%;
+    margin: 0;
+    transform: none;
+  }
+
+  .desk-controls {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  /* Retro Intercom: reposition for mobile */
+  #retro-intercom {
+    position: static;
+    margin: 10px auto;
+    width: 90px;
+    height: 110px;
+  }
+
+  /* Floating Memo: reposition for mobile */
+  .floating-memo {
+    position: static;
+    margin: 10px auto;
+    width: 120px;
+    height: 120px;
+    transform: none;
+  }
+
+  .floating-memo:hover {
+    transform: scale(1.05);
+    top: auto;
+  }
+
+  /* Typewriter Chat Drawer: full width on mobile */
+  .typewriter-chat-drawer {
+    left: 0;
+    width: 100%;
+    height: 60vh;
+    border-radius: 12px 12px 0 0;
+  }
+
+  .typewriter-paper {
+    padding: 15px 15px 10px 30px;
+  }
+
+  /* Corkboard grid: single column on mobile */
+  #corkboard-container {
+    grid-template-columns: 1fr;
+    border-width: 10px;
+    padding: 15px;
+    min-height: 300px;
+  }
+
+  .sticky-note {
+    min-height: 140px;
+  }
+
+  /* Modal dialog: full width */
+  .notepad-dialog {
+    max-width: 95vw;
+    padding: 25px 20px 20px 35px;
+  }
+
+  .alarm-popup {
+    max-width: 90vw;
+  }
+
+  /* Task items */
+  .task-item {
+    font-size: 1.25rem;
+    padding-left: 10px;
+  }
+
+  .task-list-scroller {
+    height: auto;
+    max-height: 400px;
+  }
+
+  /* Coffee stain hidden on mobile */
+  .coffee-stain {
+    display: none;
+  }
+
+  /* Paperclip hidden on mobile */
+  .paperclip {
+    display: none;
+  }
+
+  /* Leather corners hidden on mobile */
+  .leather-corner-tl, .leather-corner-tr, .leather-corner-bl, .leather-corner-br {
+    display: none;
+  }
+}
+
+/* Extra small screens (phones in portrait) */
+@media (max-width: 480px) {
+  body {
+    padding: 4px;
+  }
+
+  #desk {
+    padding: 10px;
+    border-radius: 8px;
+  }
+
+  .desk-title-plate {
+    font-size: 0.85rem;
+    padding: 4px 16px;
+    letter-spacing: 1.5px;
+  }
+
+  .view-switch-container {
+    font-size: 0.75rem;
+    gap: 6px;
+  }
+
+  .switch-button {
+    width: 70px;
+    height: 28px;
+  }
+
+  .switch-knob {
+    width: 30px;
+    height: 20px;
+  }
+
+  .corkboard-active .switch-knob {
+    transform: translateX(32px);
+  }
+
+  .volume-dial-container {
+    font-size: 0.75rem;
+    gap: 6px;
+  }
+
+  #desk-search {
+    font-size: 1.1rem;
+    padding: 5px 10px;
+  }
+
+  .notebook-header {
+    font-size: 1.6rem;
+    margin-bottom: 15px;
+  }
+
+  .notebook-page {
+    padding: 15px !important;
+    min-height: 250px !important;
+  }
+
+  .index-card {
+    padding: 8px 10px;
+    font-size: 0.78rem;
+  }
+
+  /* Chat drawer adjustments */
+  .typewriter-chat-drawer {
+    height: 55vh;
+  }
+
+  .typewriter-paper {
+    padding: 12px 10px 8px 20px;
+  }
+
+  #chat-input {
+    font-size: 0.8rem;
+  }
+
+  #chat-input::placeholder {
+    font-size: 0.7rem;
+  }
+
+  .typewriter-key-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 0.6rem;
+  }
+
+  .chat-log {
+    font-size: 0.78rem;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .notepad-title {
+    font-size: 1.8rem;
+  }
+
+  .btn-group {
+    flex-direction: column;
+  }
+
+  .stamp-button-group {
+    grid-template-columns: 1fr;
   }
 }
 
