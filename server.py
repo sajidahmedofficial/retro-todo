@@ -8,9 +8,17 @@ from google.genai import types
 PORT = 5000
 MODEL_NAME = 'gemini-3.5-flash'
 
-# Setup Gemini Client
+# Setup Gemini Client (lazy initialization to allow server to start without key)
 API_KEY = os.environ.get("GEMINI_API_KEY") or ""
-client = genai.Client(api_key=API_KEY)
+_client = None
+
+def get_client():
+    global _client
+    if _client is None:
+        if not API_KEY:
+            raise ValueError("GEMINI_API_KEY environment variable is not set. Please set it and restart the server.")
+        _client = genai.Client(api_key=API_KEY)
+    return _client
 
 # Global queue for actions dispatch to frontend in the current request
 frontend_actions = []
@@ -178,7 +186,7 @@ class AIRequestHandler(BaseHTTPRequestHandler):
 
             try:
                 # Use generate_content with automatic function calling
-                response = client.models.generate_content(
+                response = get_client().models.generate_content(
                     model=MODEL_NAME,
                     contents=contents,
                     config=types.GenerateContentConfig(
