@@ -2,6 +2,7 @@
 import * as State from './state.js';
 import * as Audio from './audio.js';
 import * as Notifications from './notifications.js';
+import { config } from './config.js';
 
 // Application state
 let currentFilterType = 'all'; // 'all', 'today', 'upcoming', 'overdue', or 'label'
@@ -946,10 +947,8 @@ function formatDueDateShort(dateTimeStr) {
 // ---------------------------------------------------------
 // VINTAGE TELE-PLANNER CHAT BACKEND INTEGRATION
 // ---------------------------------------------------------
-// Determine backend URL dynamically
-const AI_BACKEND_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-  ? 'http://localhost:5000'
-  : null; // No backend available on deployed sites
+// Determine backend URL dynamically from config
+const AI_BACKEND_URL = config.AI_BACKEND_URL;
 
 async function checkServerStatus() {
   if (isCheckingServerStatus) return;

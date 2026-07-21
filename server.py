@@ -3,6 +3,7 @@ import json
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from google import genai
 from google.genai import types
+import threading
 
 # Configurations
 PORT = 5000
@@ -20,8 +21,13 @@ def get_client():
         _client = genai.Client(api_key=API_KEY)
     return _client
 
-# Global queue for actions dispatch to frontend in the current request
-frontend_actions = []
+# Thread-local storage for request-scoped variables (avoids global mutable state)
+request_context = threading.local()
+
+def get_frontend_actions():
+    if not hasattr(request_context, 'actions'):
+        request_context.actions = []
+    return request_context.actions
 
 # Define python functions as tools for Gemini automatic function calling
 def add_todo_task(title: str, description: str = "", due_date: str = "", priority: str = "Medium", labels: list[str] = None) -> str:
@@ -34,7 +40,7 @@ def add_todo_task(title: str, description: str = "", due_date: str = "", priorit
         priority: The priority of the task ('High', 'Medium', or 'Low').
         labels: List of tags/labels (e.g. ['Work', 'Personal']).
     """
-    global frontend_actions
+    """
     action = {
         "type": "ADD_TASK",
         "data": {
@@ -45,7 +51,7 @@ def add_todo_task(title: str, description: str = "", due_date: str = "", priorit
             "labels": labels or []
         }
     }
-    frontend_actions.append(action)
+    get_frontend_actions().append(action)
     return f"Task '{title}' added successfully to frontend."
 
 def update_todo_task(task_id: str, title: str = None, description: str = None, due_date: str = None, priority: str = None, labels: list[str] = None, status: str = None) -> str:
@@ -60,7 +66,7 @@ def update_todo_task(task_id: str, title: str = None, description: str = None, d
         labels: The new list of labels.
         status: The new status of the task ('Pending' or 'Completed').
     """
-    global frontend_actions
+    """
     data = {"id": task_id}
     if title is not None: data["title"] = title
     if description is not None: data["description"] = description
@@ -73,7 +79,7 @@ def update_todo_task(task_id: str, title: str = None, description: str = None, d
         "type": "UPDATE_TASK",
         "data": data
     }
-    frontend_actions.append(action)
+    get_frontend_actions().append(action)
     return f"Task '{task_id}' updated successfully in frontend."
 
 def delete_todo_task(task_id: str) -> str:
@@ -82,12 +88,12 @@ def delete_todo_task(task_id: str) -> str:
     Args:
         task_id: The ID of the task to delete (required).
     """
-    global frontend_actions
+    """
     action = {
         "type": "DELETE_TASK",
         "data": {"id": task_id}
     }
-    frontend_actions.append(action)
+    get_frontend_actions().append(action)
     return f"Task '{task_id}' crumpled/deleted successfully in frontend."
 
 
@@ -153,9 +159,8 @@ class AIRequestHandler(BaseHTTPRequestHandler):
             current_tasks = data.get("tasks", [])
             frontend_history = data.get("history", [])
             
-            # Reset actions queue for this request
-            global frontend_actions
-            frontend_actions = []
+            # Reset actions queue for this request context
+            request_context.actions = []
 
             # Format current tasks list as context for the assistant
             tasks_context = "Current tasks in the planner:\n"
@@ -202,14 +207,14 @@ class AIRequestHandler(BaseHTTPRequestHandler):
 
                 response_text = response.text or ""
                 print(f"Response Text: {response_text}")
-                print(f"Frontend Actions: {frontend_actions}")
+                print(f"Frontend Actions: {get_frontend_actions()}")
 
                 self.send_response(200)
                 self.send_header('Content-Type', 'application/json')
                 self.end_headers()
                 self.wfile.write(json.dumps({
                     "response": response_text,
-                    "actions": frontend_actions
+                    "actions": get_frontend_actions()
                 }).encode('utf-8'))
 
             except Exception as e:
