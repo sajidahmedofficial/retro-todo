@@ -9,6 +9,30 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📋</text></svg>">
 </head>
 <body>
+  <!-- Retro Identity Card Login Modal -->
+  <div id="auth-modal" class="modal-overlay active">
+    <div class="auth-card">
+      <div class="auth-card-header">
+        <div class="auth-card-hole"></div>
+        <h2>EMPLOYEE ID</h2>
+        <p>ACCESS REQUIRED</p>
+      </div>
+      <form id="auth-form" class="auth-form">
+        <label for="auth-email">EMAIL ADDRESS:</label>
+        <input type="email" id="auth-email" required placeholder="name@company.com">
+        
+        <label for="auth-password">PASSCODE:</label>
+        <input type="password" id="auth-password" required>
+        
+        <div class="auth-actions">
+          <button type="submit" id="auth-login-btn" class="retro-btn primary">PUNCH IN (Login)</button>
+          <button type="button" id="auth-signup-btn" class="retro-btn secondary">REGISTER (Sign Up)</button>
+        </div>
+        <p id="auth-error" class="auth-error"></p>
+      </form>
+    </div>
+  </div>
+
   <!-- Retro Desk Workspace -->
   <main id="desk">
     
@@ -39,6 +63,9 @@
           <div class="volume-dial" id="volume-dial" title="Mute/Unmute toggle"></div>
           <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="0.5" style="width: 60px; accent-color: #d4af37;" aria-label="Volume Slider">
         </div>
+        
+        <!-- Logout Button -->
+        <button id="logout-btn" class="retro-btn" style="display:none; font-size: 0.6rem; margin-left: 10px; background-color: #a33; color: white;" title="Sign Out">PUNCH OUT</button>
       </div>
     </header>
 

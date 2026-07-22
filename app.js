@@ -2,6 +2,7 @@
 import * as State from './state.js';
 import * as Audio from './audio.js';
 import * as Notifications from './notifications.js';
+import * as Auth from './auth.js';
 import { config } from './config.js';
 
 // Application state
@@ -87,11 +88,73 @@ document.addEventListener('DOMContentLoaded', () => {
     alarmTaskTitle.textContent = task.title;
     alarmModal.classList.add('active');
   });
+
+  // Auth state listener
+  const handleAuthChange = (session) => {
+    if (session) {
+      document.body.classList.remove('locked');
+      document.getElementById('auth-modal').classList.remove('active');
+      document.getElementById('logout-btn').style.display = 'block';
+    } else {
+      document.body.classList.add('locked');
+      document.getElementById('auth-modal').classList.add('active');
+      document.getElementById('logout-btn').style.display = 'none';
+    }
+  };
+
+  Auth.onAuthStateChange((event, session) => {
+    handleAuthChange(session);
+  });
+
+  Auth.getSession().then(({ data }) => {
+    handleAuthChange(data?.session);
+  });
 });
 
 function initUI() {
   const settings = State.getSettings();
   
+  // Auth UI Handlers
+  const authForm = document.getElementById('auth-form');
+  const emailInput = document.getElementById('auth-email');
+  const passInput = document.getElementById('auth-password');
+  const authError = document.getElementById('auth-error');
+  
+  document.getElementById('auth-login-btn').addEventListener('click', async (e) => {
+    e.preventDefault();
+    if (!authForm.checkValidity()) {
+      authForm.reportValidity();
+      return;
+    }
+    Audio.playScribble();
+    const { error } = await Auth.signIn(emailInput.value, passInput.value);
+    if (error) {
+      authError.textContent = error.message;
+    } else {
+      authError.textContent = '';
+    }
+  });
+
+  document.getElementById('auth-signup-btn').addEventListener('click', async (e) => {
+    e.preventDefault();
+    if (!authForm.checkValidity()) {
+      authForm.reportValidity();
+      return;
+    }
+    Audio.playScribble();
+    const { error } = await Auth.signUp(emailInput.value, passInput.value);
+    if (error) {
+      authError.textContent = error.message;
+    } else {
+      authError.textContent = 'Account created! Please confirm email if required by Supabase, otherwise you are logged in.';
+    }
+  });
+
+  document.getElementById('logout-btn').addEventListener('click', async () => {
+    Audio.playStamp();
+    await Auth.signOut();
+  });
+
   // Setup volume dial and mute states
   updateVolumeDial(settings.volume, settings.muted);
   volumeSlider.value = settings.volume;
