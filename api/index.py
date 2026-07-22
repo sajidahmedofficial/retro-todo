@@ -256,3 +256,6 @@ if __name__ == '__main__':
         print("server.py syntax check passed.")
         sys.exit(0)
     run_server()
+
+# Vercel Serverless Function entrypoint
+handler = AIRequestHandler
