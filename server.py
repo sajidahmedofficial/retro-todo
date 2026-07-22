@@ -7,18 +7,32 @@ import threading
 
 # Configurations
 PORT = 5000
-MODEL_NAME = 'gemini-3.5-flash'
+MODEL_NAME = 'gemini-3.5-flash-lite'
 
 # Setup Gemini Client (lazy initialization to allow server to start without key)
-API_KEY = os.environ.get("GEMINI_API_KEY") or ""
 _client = None
+
+def load_env_local():
+    try:
+        with open(".env.local", "r") as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith("#") and "=" in line:
+                    key, val = line.split("=", 1)
+                    # Strip quotes if present
+                    val = val.strip().strip("'\"")
+                    os.environ[key.strip()] = val
+    except FileNotFoundError:
+        pass
 
 def get_client():
     global _client
     if _client is None:
-        if not API_KEY:
+        load_env_local()
+        api_key = os.environ.get("GEMINI_API_KEY") or ""
+        if not api_key:
             raise ValueError("GEMINI_API_KEY environment variable is not set. Please set it and restart the server.")
-        _client = genai.Client(api_key=API_KEY)
+        _client = genai.Client(api_key=api_key)
     return _client
 
 # Thread-local storage for request-scoped variables (avoids global mutable state)
@@ -39,7 +53,6 @@ def add_todo_task(title: str, description: str = "", due_date: str = "", priorit
         due_date: The due date/time in YYYY-MM-DDTHH:mm format (e.g. '2026-07-18T09:00').
         priority: The priority of the task ('High', 'Medium', or 'Low').
         labels: List of tags/labels (e.g. ['Work', 'Personal']).
-    """
     """
     action = {
         "type": "ADD_TASK",
@@ -66,7 +79,6 @@ def update_todo_task(task_id: str, title: str = None, description: str = None, d
         labels: The new list of labels.
         status: The new status of the task ('Pending' or 'Completed').
     """
-    """
     data = {"id": task_id}
     if title is not None: data["title"] = title
     if description is not None: data["description"] = description
@@ -87,7 +99,6 @@ def delete_todo_task(task_id: str) -> str:
     
     Args:
         task_id: The ID of the task to delete (required).
-    """
     """
     action = {
         "type": "DELETE_TASK",
