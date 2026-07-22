@@ -2417,4 +2417,26 @@ body {
   #retro-intercom:hover {
     transform: scale(0.68) translateY(-4px) !important;
   }
+  
+  /* Typewriter Chat Drawer Fixes */
+  .typewriter-chat-drawer {
+    left: 0 !important;
+    width: 100% !important;
+    height: 70vh !important;
+    border-radius: 12px 12px 0 0 !important;
+  }
+  .typewriter-paper {
+    padding: 15px 15px 10px 35px !important;
+    background-position: 0 0, 25px 0 !important;
+  }
+  .chat-log {
+    font-size: 0.8rem !important;
+    line-height: 1.4 !important;
+  }
+  .paper-input-line {
+    padding-bottom: 20px !important;
+  }
+  #chat-input {
+    font-size: 0.8rem !important;
+  }
 }
